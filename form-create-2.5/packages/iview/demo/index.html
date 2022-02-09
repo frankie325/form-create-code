@@ -1,0 +1,103 @@
+<!--
+ * @Author: your name
+ * @Date: 2022-02-01 15:43:46
+ * @LastEditTime: 2022-02-04 11:58:30
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \code\form-create-2.5\packages\iview\demo\index.html
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- import Vue.js -->
+    <script src="//vuejs.org/js/vue.min.js"></script>
+    <!-- import stylesheet -->
+    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css" />
+    <!-- import iView -->
+    <script src="//unpkg.com/iview/dist/iview.min.js"></script>
+
+    <script src="../dist/form-create.js"></script>
+    <script src="../examples/jsonRule.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <form-create v-model="fApi" :rule="rule" :option="option"></form-create>
+    </div>
+    <div id="temp"></div>
+  </body>
+  <script>
+    window.onload = function() {
+      // 自定义属性的使用
+      formCreate.register({
+        name: "str",
+        //rule初始化
+        init(opt, rule) {
+          // console.log(opt, rule);
+          rule.value = opt.value;
+        },
+        //rule开始加载
+        load({ value }, rule, fapi) {},
+        //rule加载完成
+        loaded({ value }, rule, fapi) {},
+        //属性值发生变化
+        watch({ value }, rule, fapi) {
+          // console.log("属性值发生变化");
+        },
+        //组件的值发生变化
+        value({ value }, rule, fapi) {
+          // console.log("组件的值发生变化");
+        },
+        //control 生效
+        control({ value }, rule, fapi) {},
+        //rule 移除
+        deleted({ value }, rule, fapi) {},
+        //rule 生成
+        mounted({ value }, rule, fapi) {},
+      });
+
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            rule: [
+              // ...jsonMock(),
+              {
+                type: "input",
+                field: "ceshi111",
+                title: "输入框1",
+                value: "",
+                effect: { str: "我是自定义的属性" },
+                on: {
+                  input: () => {
+                    this.rule[0].effect.str = this.rule[0].effect.str + "变";
+                    // this.rule;
+                  },
+                },
+              },
+            ],
+            option: {},
+            fApi: {},
+          };
+        },
+        methods: {},
+        mounted: function() {},
+      });
+
+      // 使用Vue.compile方式
+      let template = "<div>i am template</div>";
+      let renderObj = Vue.compile(template);
+      // console.log("renderObj", renderObj);
+
+      let temp = new Vue();
+      temp.$options.render = renderObj.render;
+      temp.$options.staticRenderFns = renderObj.staticRenderFns;
+      temp.$mount("#temp");
+    };
+  </script>
+</html>

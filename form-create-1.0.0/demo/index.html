@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- import Vue.js -->
+    <script src="//vuejs.org/js/vue.min.js"></script>
+    <!-- import stylesheet -->
+    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css" />
+    <!-- import iView -->
+    <script src="//unpkg.com/iview/dist/iview.min.js"></script>
+    <!-- <script type="module" src="../packages//core/dist/form-create.core.js"></script> -->
+    <script src="../packages/iview/dist/form-create.js"></script>
+    <script src="../packages/iview/demo/mock.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <form-create
+        v-model="fApi"
+        :rule="rule"
+        :option="option"
+        @goods-name-on-change="change"
+        @btn-click="change"
+        @xaboy-on-change="change"
+        @mounted="fcMounted"
+        @on-submit="onSubmit"
+      ></form-create>
+    </div>
+    <div id="temp"></div>
+  </body>
+  <script>
+    window.onload = function () {
+      console.log(mock())
+      new Vue({
+        el: "#app",
+        components: {
+          formCreate: formCreate.$form(),
+        },
+        data: {
+          rule: [
+            ...mock(),
+            {
+              type: "input",
+              // field: "ceshi111",
+              title: "输入框1",
+              value: "",
+              info: {
+                //提示消息类型,popover,tooltip
+                type: "tooltip",
+                placement: "topLeft",
+                icon: "question-circle-o",
+              },
+              on: {
+                "on-change": [
+                  () => {
+                    console.log("ceshi111");
+                  },
+                  () => {
+                    console.log("ceshi2222");
+                  },
+                ],
+              },
+            },
+            {
+              type: "div",
+              children: [
+                {
+                  type: "i-col",
+                  props: {
+                    span: 12,
+                  },
+                  children: [
+                    {
+                      type: "input",
+                      field: "ceshi22",
+                      title: "输入框2",
+                      value: "",
+                    },
+                  ],
+                },
+                "children里可以是字符",
+              ],
+            },
+            {
+              type: "button",
+              children: [
+                {
+                  type: "icon",
+                  class: {
+                    "ios-add": true,
+                  },
+                  props: {},
+                },
+                " 方式2",
+              ],
+            },
+            {
+              type: "template",
+              template: "<div>i am {{msg}}  {{ceshi}}</div>",
+              vm: new Vue({
+                propsData: {
+                  ceshi: "hhh",
+                },
+                props: ["ceshi"],
+                data() {
+                  return {
+                    msg: "template1",
+                  };
+                },
+              }),
+              prop: {
+                ceshi: "测试",
+              },
+            },
+          ],
+          option: {
+            // 设置Form组件上的属性
+            form: {},
+            // 设置所有组件的通用规则
+            global: {
+              // 设置input的通用规则
+              input: {
+                props: {
+                  // disabled: true,
+                },
+              },
+            },
+            injectEvent: true,
+            //显示表单重置按钮
+            resetBtn: true,
+            mounted: function ($f) {
+              var $m = $f.model();
+              // $m.goods_name.value = "HuaWei Plus";
+            },
+          },
+          //$f
+          fApi: {},
+        },
+        methods: {
+          change: function () {
+            console.log(arguments);
+          },
+          //表单提交事件
+          onSubmit: function (formData) {
+            alert(JSON.stringify(formData));
+            this.fApi.btn.loading();
+            //重置按钮禁用
+            this.fApi.resetBtn.disabled();
+          },
+          fcMounted($f) {
+            console.log("form-create mounted", $f);
+          },
+        },
+        mounted: function () {
+          console.log(this);
+          console.log(this.fApi);
+        },
+      });
+
+      // 使用Vue.compile方式
+      let template = "<div>i am template</div>";
+      let renderObj = Vue.compile(template);
+      // console.log("renderObj", renderObj);
+
+      let temp = new Vue();
+      temp.$options.render = renderObj.render;
+      temp.$options.staticRenderFns = renderObj.staticRenderFns;
+      temp.$mount("#temp");
+    };
+  </script>
+</html>
