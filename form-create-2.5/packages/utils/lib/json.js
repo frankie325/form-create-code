@@ -33,6 +33,7 @@ function makeFn(fn) {
     return eval('(' + FUNCTION + '(){return ' + fn + ' })()')
 }
 
+// 解析字符方法
 export function parseFn(fn, mode) {
     if (fn && is.String(fn) && fn.length > 4) {
         let v = fn.trim();

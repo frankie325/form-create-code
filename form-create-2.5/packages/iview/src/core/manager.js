@@ -3,9 +3,17 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 
+// 重新整理rule.title和rule.info
 function tidy(props, name) {
-    if (!hasProperty(props, name)) return;
-    if (is.String(props[name])) {
+    if (!hasProperty(props, name)) return; //如果没有定义，直接返回
+    if (is.String(props[name])) { 
+        /*
+        如果是字符，整理成对象
+        {
+            title:rule.title,
+            show:true,
+        }
+        */
         props[name] = {[name]: props[name], show: true};
     }
 }
@@ -41,6 +49,7 @@ export default {
         return options;
     },
     tidyRule({prop}) {
+        // prop为rule规则，重新设置rule.title和rule.info
         tidy(prop, 'title');
         tidy(prop, 'info');
         return prop;
@@ -63,10 +72,12 @@ export default {
             props.size = this.options.form.size;
         }
     },
+    // 获取默认的option配置
     getDefaultOptions() {
         return getConfig();
     },
     update() {
+        // 设置manager.rule属性
         const form = this.options.form;
         this.rule = {
             props: {...form},
@@ -80,8 +91,11 @@ export default {
             type: 'form',
         };
     },
+    //设置Form组件的属性
     beforeRender() {
-        const {key, ref, $handle} = this;
+        const {key, ref, $handle} = this; //this为Manager实例，拿到key，ref，handler
+
+        // 设置Form组件的属性
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
             model: $handle.formData,
@@ -90,14 +104,16 @@ export default {
     },
     render(children) {
         if (children.length) {
-            children.push(this.makeFormBtn());
+            children.push(this.makeFormBtn()); //创建提交按钮
         }
+        // option.row.show为true的话，先使用Row包裹所有表单控件
         return this.$r(this.rule, isFalse(this.options.row.show) ? children : [this.makeRow(children)]);
     },
+    // 创建FormItem的VNode
     makeWrap(ctx, children) {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
-        const col = rule.col;
+        const col = rule.col; //拿到rule.col
         const isTitle = this.isTitle(rule);
         const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
         const {inline, col: _col} = this.rule.props;
@@ -120,6 +136,7 @@ export default {
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show))
     },
+    // 根据rule.info配置生成VNode
     makeInfo(rule, uni) {
         const titleProp = rule.title;
         const infoProp = rule.info;
@@ -159,6 +176,7 @@ export default {
             type: titleProp.type || 'span',
         }]), children);
     },
+    // 创建Col的VNode
     makeCol(rule, uni, children) {
         const col = rule.col;
         return this.$r({

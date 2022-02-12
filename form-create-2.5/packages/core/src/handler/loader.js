@@ -14,18 +14,31 @@ export default function useLoader(Handler) {
                 id === this.loadedId && (fn ? fn() : this.refresh());
             });
         },
+        // 处理rule中的一些属性
         parseRule(_rule) {
             const rule = getRule(_rule);
 
+            // 定义rule.__origin__，指向最初始的rule
             Object.defineProperties(rule, {
                 __origin__: enumerable(_rule, true)
             });
 
-            fullRule(rule);
+            fullRule(rule); // 给rule添加最基本的配置项
             this.appendValue(rule);
 
             rule.options = Array.isArray(rule.options) ? rule.options : [];
 
+            /*
+                2.5.0新增prefix和suffix
+                rule = {
+                    prefix:{
+                        type:'ElButton', children:['prefix'], props:{loading:true}
+                    },
+                    suffix:{
+                        type:'ElButton', children:['suffix'], props:{loading:true}
+                    },
+                },
+            */
             [rule, rule['prefix'], rule['suffix']].forEach(item => {
                 if (!item) {
                     return;
@@ -33,16 +46,19 @@ export default function useLoader(Handler) {
                 this.loadFn(item, rule);
             });
             this.loadCtrl(rule);
+
             if (rule.update) {
                 rule.update = parseFn(rule.update);
             }
             return rule;
         },
+        //为rule中下列属性中的方法进行参数注入
         loadFn(item, rule) {
             ['on', 'props', 'nativeOn', 'deep'].forEach(k => {
                 item[k] && this.parseInjectEvent(rule, item[k]);
             });
         },
+        // 处理组件联动rule.control中的handle方法
         loadCtrl(rule) {
             rule.control && rule.control.forEach(ctrl => {
                 if (ctrl.handle) {
@@ -50,17 +66,26 @@ export default function useLoader(Handler) {
                 }
             })
         },
+        // 处理rule.sync，设置props中属性的双向绑定
         syncProp(ctx) {
             const rule = ctx.rule;
             is.trueArray(rule.sync) && mergeProps([{
+                /*
+                    rule.sync:["xxx"]
+                    生成on事件对象，进行双向绑定
+                    {
+                        "update:xxx":() => {},
+                        ...
+                    }
+                */ 
                 on: rule.sync.reduce((pre, prop) => {
                     pre[`update:${prop}`] = (val) => {
-                        rule.props[prop] = val;
+                        rule.props[prop] = val; //更新props里的值
                         this.vm.$emit('sync', prop, val, rule, this.fapi);
                     }
                     return pre
                 }, {})
-            }], ctx.computed)
+            }], ctx.computed) //合并到ctx.computed中
         },
         loadRule() {
             // console.warn('%c load', 'color:blue');
@@ -79,7 +104,7 @@ export default function useLoader(Handler) {
                     this.bus.$emit('load-end');
                 }
                 this.vm._renderRule();
-                this.$render.initOrgChildren();
+                this.$render.initOrgChildren(); //初始化this.orgChildren
                 this.syncForm();
             });
         },
@@ -87,7 +112,7 @@ export default function useLoader(Handler) {
             this.cycleLoad = false;
             this.loading = true;
             this.bus.$emit('load-start');
-            this._loadRule(children, parent);
+            this._loadRule(children, parent); //递归调用_loadRule
             this.loading = false;
             if (this.cycleLoad) {
                 return this.loadRule();
@@ -97,15 +122,20 @@ export default function useLoader(Handler) {
             }
             this.$render.clearCache(parent);
         },
+        /*
+            
+        */
         _loadRule(rules, parent) {
 
             const preIndex = (i) => {
-                let pre = rules[i - 1];
-                if (!pre || !pre.__fc__) {
+                let pre = rules[i - 1]; //拿到该规则的前一个规则
+
+                if (!pre || !pre.__fc__) { //如果前一个不存在，继续往前找，找不到则返回-1
                     return i > 0 ? preIndex(i - 1) : -1;
                 }
-                let index = this.sort.indexOf(pre.__fc__.id);
-                return index > -1 ? index : preIndex(i - 1);
+
+                let index = this.sort.indexOf(pre.__fc__.id); //拿到前一个rule在handler.sort数组中的index
+                return index > -1 ? index : preIndex(i - 1); //不存在则继续向前找
             }
 
             const loadChildren = (children, parent) => {
@@ -115,23 +145,26 @@ export default function useLoader(Handler) {
             };
 
             rules.map((_rule, index) => {
-                if (parent && (is.String(_rule) || is.Undef(_rule))) return;
+                if (parent && (is.String(_rule) || is.Undef(_rule))) return; //存在父级，且无效的rule，比如字符，直接跳过
+
                 if (!this.pageEnd && !parent && index >= this.first) return;
 
-                if (!is.Object(_rule) || !getRule(_rule).type)
+                if (!is.Object(_rule) || !getRule(_rule).type) //rule非数组或没有定义rule.type，报错
                     return err('未定义生成规则的 type 字段', _rule);
 
                 if (_rule.__fc__ && _rule.__fc__.root === rules && this.ctxs[_rule.__fc__.id]) {
                     loadChildren(_rule.__fc__.rule.children, _rule.__fc__);
                     return _rule.__fc__;
                 }
-
+                // rule如果是由maker生成，则为creator实例，执行getRule方法，得到rule
                 let rule = getRule(_rule);
 
+                // 判断rule.field是否重复
                 const isRepeat = () => {
                     return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field][0] !== _rule.__fc__)
                 }
 
+                // 触发自定义属性的init方法
                 this.ruleEffect(rule, 'init', {repeat: isRepeat()});
 
                 if (isRepeat()) {
@@ -140,9 +173,9 @@ export default function useLoader(Handler) {
 
                 let ctx;
                 let isCopy = false;
-                let isInit = !!_rule.__fc__;
+                let isInit = !!_rule.__fc__; //存在__fc__，说明已经创建了对应的RuleContext实例
                 if (isInit) {
-                    ctx = _rule.__fc__;
+                    ctx = _rule.__fc__; 
                     const check = !ctx.check(this);
                     if (ctx.deleted) {
                         if (check) {
@@ -162,31 +195,43 @@ export default function useLoader(Handler) {
                         }
                     }
                 }
-                if (!ctx) {
-                    ctx = new RuleContext(this, this.parseRule(_rule));
-                    this.bindParser(ctx);
+                if (!ctx) { //如果rule对应的RuleContext实例还没创建
+                    ctx = new RuleContext(this, this.parseRule(_rule)); //创建RuleContext实例
+                    this.bindParser(ctx); // 设置parser对象到RuleContext实例
                 } else {
+                    // 存在时
+
                     if (ctx.originType !== ctx.rule.type) {
                         ctx.updateType();
                         this.bindParser(ctx);
                     }
                     this.appendValue(ctx.rule);
                 }
+
+                // 处理rule.emit / rule.nativeEmit
                 [false, true].forEach(b => this.parseEmit(ctx, b));
+                // 处理rule.sync，设置props中属性的双向绑定
                 this.syncProp(ctx);
                 ctx.parent = parent || null;
                 ctx.root = rules;
+                // 将RuleContext实例设置到handler.ctxs
                 this.setCtx(ctx);
 
                 !isCopy && !isInit && this.effect(ctx, 'load');
 
-                ctx.parser.loadChildren === false || loadChildren(ctx.rule.children, ctx);
+                ctx.parser.loadChildren === false || loadChildren(ctx.rule.children, ctx); //处理rule.children
 
+
+                // 将rule对应的ctx.id按顺序推入到handler.sort
                 if (!parent) {
-                    const _preIndex = preIndex(index);
+                    // 如果不存在父级
+                    const _preIndex = preIndex(index); //找到该rule前一个在handler.sort中的索引
+
                     if (_preIndex > -1 || !index) {
+                        //进行插入
                         this.sort.splice(_preIndex + 1, 0, ctx.id);
                     } else {
+                        // 否则推入到数组末尾
                         this.sort.push(ctx.id);
                     }
                 }
@@ -199,10 +244,11 @@ export default function useLoader(Handler) {
                             this.refreshUpdate(ctx, r.value);
                         });
                     }
-                    this.effect(ctx, 'loaded');
+                    this.effect(ctx, 'loaded'); //触发自定义属性的loaded方法
                 }
 
-                if (ctx.input)
+                if (ctx.input) //rule.field存在，则为true
+                // 拦截rule.value
                     Object.defineProperty(r, 'value', this.valueHandle(ctx));
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
@@ -212,15 +258,18 @@ export default function useLoader(Handler) {
             return ctx.input && ctx.rule.control && this.useCtrl(ctx);
         },
         useCtrl(ctx) {
+            // 拿到rule.control
             const controls = getCtrl(ctx), validate = [], api = this.api;
             if (!controls.length) return false;
 
             for (let i = 0; i < controls.length; i++) {
                 const control = controls[i], handleFn = control.handle || (val => val === control.value);
+                // 如果control.rule不是数组，跳过
                 if (!is.trueArray(control.rule)) continue;
+
                 const data = {
                     ...control,
-                    valid: invoke(() => handleFn(ctx.rule.value, api)),
+                    valid: invoke(() => handleFn(ctx.rule.value, api)), //是否符合handle方法的条件
                     ctrl: findCtrl(ctx, control.rule),
                     isHidden: is.String(control.rule[0]),
                 };
@@ -309,18 +358,22 @@ export default function useLoader(Handler) {
     });
 }
 
+
+// 给rule添加最基本的配置项
 function fullRule(rule) {
-    const def = baseRule();
+    const def = baseRule();// 得到最基本的rule配置
 
     Object.keys(def).forEach(k => {
+        // 如果最基本的配置项不存在rule中，则进行添加
         if (!hasProperty(rule, k)) rule[k] = def[k];
     });
     return rule;
 }
 
+// 拿到rule.control
 function getCtrl(ctx) {
     const control = ctx.rule.control || [];
-    if (is.Object(control)) return [control];
+    if (is.Object(control)) return [control]; //如果是对象，转为数组
     else return control;
 }
 

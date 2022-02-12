@@ -1,3 +1,4 @@
+// 连字符转驼峰
 export default function toCase(str) {
     const to = str.replace(/(-[a-z])/g, function (v) {
         return v.replace('-', '').toLocaleUpperCase();

@@ -27,7 +27,9 @@ export default function Manager(handler) {
 
 extend(Manager.prototype, {
     __init() {
-        this.$render = this.$handle.$render;
+        this.$render = this.$handle.$render; //render实例
+
+        // 用来调用render.renderRule方法
         this.$r = (...args) => this.$render.renderRule(...args);
     },
     updateKey() {
@@ -43,11 +45,14 @@ extend(Manager.prototype, {
     form() {
         return this.vm.$refs[this.ref];
     },
+    // 合并用户传递的option配置合并到fc.options
     mergeOptions(args, opt) {
         return mergeProps(args.map(v => this.tidyOptions(v)), opt, this.mergeOptionsRule);
     },
     updateOptions(options) {
+        // 将handler.options添加到manager.options
         this.options = this.mergeOptions([options], this.getDefaultOptions());
+        // 设置this.rule，也就是Form组件的rule
         this.update();
     },
     tidyOptions(options) {

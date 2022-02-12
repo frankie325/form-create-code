@@ -37,6 +37,7 @@ export default function Handler(fc) {
         }
     });
 
+    // 对下述对象中的方法进行代理，通过this.options直接访问
     funcProxy(this, {
         options() {
             return fc.options;
@@ -57,10 +58,17 @@ extend(Handler.prototype, {
     // 初始化下列属性
     initData(rules) {
         extend(this, {
+            /*
+                将RuleContext实例设置到handler.ctxs
+                所有rule对应的ctx实例都在这
+                ctxs = {
+                    id:RuleContext实例
+                }
+            */ 
             ctxs: {},
             fieldCtx: {},
             nameCtx: {},
-            sort: [],
+            sort: [], //保存rule对应的ctx.id，按顺序排列，children里的rule不会
             rules,
         });
     },
@@ -68,9 +76,9 @@ extend(Handler.prototype, {
         this.appendData = {...this.fc.options.formData || {}, ...this.vm.value || {}, ...this.appendData};
         this.useProvider(); //处理自定义属性
         this.usePage(); //设置分页
-        this.loadRule();
+        this.loadRule();//处理rules
         this.$manager.__init();
-        this.vm.$set(this.vm, 'formData', this.formData);
+        this.vm.$set(this.vm, 'formData', this.formData); //设置formData
     },
 })
 

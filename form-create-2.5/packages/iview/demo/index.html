@@ -1,103 +1,308 @@
-<!--
- * @Author: your name
- * @Date: 2022-02-01 15:43:46
- * @LastEditTime: 2022-02-04 11:58:30
- * @LastEditors: Please set LastEditors
- * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: \code\form-create-2.5\packages\iview\demo\index.html
--->
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <!-- import Vue.js -->
-    <script src="//vuejs.org/js/vue.min.js"></script>
-    <!-- import stylesheet -->
-    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css" />
-    <!-- import iView -->
-    <script src="//unpkg.com/iview/dist/iview.min.js"></script>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <!-- import Vue -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script> -->
+        <script src="//unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 
-    <script src="../dist/form-create.js"></script>
-    <script src="../examples/jsonRule.js"></script>
-  </head>
+        <!-- import iview -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/iview@3.5.4/dist/styles/iview.css" />
+        <script src="https://cdn.jsdelivr.net/npm/iview@3.5.4/dist/iview.min.js"></script>
 
-  <body>
-    <div id="app">
-      <form-create v-model="fApi" :rule="rule" :option="option"></form-create>
-    </div>
-    <div id="temp"></div>
-  </body>
-  <script>
-    window.onload = function() {
-      // 自定义属性的使用
-      formCreate.register({
-        name: "str",
-        //rule初始化
-        init(opt, rule) {
-          // console.log(opt, rule);
-          rule.value = opt.value;
-        },
-        //rule开始加载
-        load({ value }, rule, fapi) {},
-        //rule加载完成
-        loaded({ value }, rule, fapi) {},
-        //属性值发生变化
-        watch({ value }, rule, fapi) {
-          // console.log("属性值发生变化");
-        },
-        //组件的值发生变化
-        value({ value }, rule, fapi) {
-          // console.log("组件的值发生变化");
-        },
-        //control 生效
-        control({ value }, rule, fapi) {},
-        //rule 移除
-        deleted({ value }, rule, fapi) {},
-        //rule 生成
-        mounted({ value }, rule, fapi) {},
-      });
+        <script src="../dist/form-create.js"></script>
+        <script src="../examples/jsonRule.js"></script>
+    </head>
 
-      new Vue({
-        el: "#app",
-        data() {
-          return {
-            rule: [
-              // ...jsonMock(),
-              {
-                type: "input",
-                field: "ceshi111",
-                title: "输入框1",
-                value: "",
-                effect: { str: "我是自定义的属性" },
-                on: {
-                  input: () => {
-                    this.rule[0].effect.str = this.rule[0].effect.str + "变";
-                    // this.rule;
-                  },
+    <body>
+        <div id="app">
+            <form-create v-model="fApi" :rule="rule" :option="option" @ceshi-input="emitFun" @sync="syncFun">
+                <template slot="type-field-component" slot-scope="scope">
+                    <i-input :value="''+scope.model.value" @input="(v)=>scope.model.callback(parseInt(v))" />
+                </template>
+                <!-- <template slot="container" slot-scope="scope">
+                
+                </template> -->
+            </form-create>
+            <!-- <button @click="clearable = !clearable">clearable双向绑定</button> -->
+        </div>
+        <div id="temp"></div>
+    </body>
+    <script>
+        window.onload = function () {
+            // 自定义属性的使用
+            formCreate.register({
+                name: "str",
+                //属性绑定的组件,不设置或者'*'默认为全部组件
+                // components: "*", //
+                //rule初始化
+                input: true,
+                init(opt, rule) {
+                    // console.log(opt, rule);
+                    rule.value = opt.value;
                 },
-              },
-            ],
-            option: {},
-            fApi: {},
-          };
-        },
-        methods: {},
-        mounted: function() {},
-      });
+                //rule开始加载
+                load({ value }, rule, fapi) {},
+                //rule加载完成
+                loaded({ value }, rule, fapi) {},
+                //属性值发生变化
+                watch({ value }, rule, fapi) {
+                    // console.log("属性值发生变化");
+                },
+                //组件的值发生变化
+                value({ value }, rule, fapi) {
+                    // console.log("组件的值发生变化");
+                },
+                //control 生效
+                control({ value }, rule, fapi) {},
+                //rule 移除
+                deleted({ value }, rule, fapi) {},
+                //rule 生成
+                mounted({ value }, rule, fapi) {},
+            });
 
-      // 使用Vue.compile方式
-      let template = "<div>i am template</div>";
-      let renderObj = Vue.compile(template);
-      // console.log("renderObj", renderObj);
+            new Vue({
+                el: "#app",
+                data() {
+                    return {
+                        rule: [
+                            // "根字符子节点测试", //不会渲染
+                            {
+                                type: "fieldComponent",
+                                field: "fieldComponent",
+                                title: "自定义插槽",
+                                value: 100,
+                            },
+                            // ...jsonMock(),
+                            {
+                                type: "input",
+                                field: "ceshi",
+                                title: "输入框1",
+                                value: "",
+                                effect: { str: "我是自定义的属性" },
+                                sync: ["clearable"],
+                                props: {
+                                    clearable: true,
+                                    prefix: "1",
+                                    // fun: () => {},
+                                },
+                                // inject: ["自定义参数,数据类型不限"], //也可以在这里注入，也可以在option.injectEvent设置
+                                emit: [
+                                    {
+                                        name: "input",
+                                        // inject: ["自定义参数,数据类型不限"],
+                                    },
+                                ],
+                                on: {
+                                    input: () => {
+                                        this.rule[0].effect.str = this.rule[0].effect.str + "变";
+                                        // this.rule;
+                                    },
+                                },
+                                // 设置scopedSlots，可以提供插槽内容
+                                scopedSlots: {
+                                    prefix: () => {
+                                        return "prefix";
+                                    },
+                                },
+                                // children: [
+                                //     {
+                                //         type: "icon",
+                                //         props: {
+                                //             type: "ios-checkmark",
+                                //         },
+                                //         slot: "prefix",
+                                //     },
+                                // ],
+                            },
+                            // {
+                            //     type: "rate",
+                            //     field: "star",
+                            //     title: "评分",
+                            //     value: 5,
+                            //     control: [
+                            //         {
+                            //             //可以直接用value
+                            //             // value: 2,
+                            //             handle(val) {
+                            //                 return val < 3;
+                            //             },
+                            //             rule: [
+                            //                 {
+                            //                     type: "input",
+                            //                     field: "info",
+                            //                     title: "差评原因",
+                            //                     value: "default info",
+                            //                 },
+                            //             ],
+                            //         },
+                            //     ],
+                            // },
+                            {
+                                type: "row",
+                                // native: true,
+                                children: [
+                                    {
+                                        type: "col",
+                                        props: {
+                                            span: 12,
+                                        },
+                                        children: [
+                                            {
+                                                type: "datePicker",
+                                                title: "活动日期",
+                                                field: "section_day",
+                                                value: ["2018-02-20 12:12:12", "2018-03-20 12:12:12"],
+                                                props: {
+                                                    type: "datetimerange",
+                                                },
+                                            },
+                                            "字符子节点测试",
+                                        ],
+                                    },
+                                    {
+                                        type: "col",
+                                        props: {
+                                            span: 12,
+                                        },
+                                        children: [
+                                            {
+                                                type: "timePicker",
+                                                title: "活动时间",
+                                                field: "section_time",
+                                                value: ["11:11:11", "22:22:22"],
+                                                props: {
+                                                    isRange: true,
+                                                    placeholder: "请选择活动时间",
+                                                },
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
+                            {
+                                type: "select",
+                                field: "select_form",
+                                props: {
+                                    data: [],
+                                },
+                                optionsTo: "props.data", //会将options值设置到上面的props.data
+                                options: [
+                                    {
+                                        label: "选项1",
+                                        value: 1,
+                                    },
+                                    {
+                                        label: "选项2",
+                                        value: 1,
+                                    },
+                                ],
+                                deep: {
+                                    //会添加rule.str属性
+                                    str: "deep测试",
+                                },
+                            },
+                            {
+                                type: "template",
+                                template: "<div>i am {{msg}}  {{ceshi}}</div>",
+                                // vm可以使用三种形式
+                                // vm: new Vue({
+                                //     propsData: {
+                                //         ceshi: "hhh",
+                                //     },
+                                //     props: ["ceshi"],
+                                //     data() {
+                                //         return {
+                                //             msg: "template1",
+                                //         };
+                                //     },
+                                // }),
+                                // vm: {
+                                //     propsData: {
+                                //         ceshi: "hhh",
+                                //     },
+                                //     props: ["ceshi"],
+                                //     data() {
+                                //         return {
+                                //             msg: "template1",
+                                //         };
+                                //     },
+                                // },
+                                vm: function () {
+                                    return new Vue({
+                                        propsData: {
+                                            ceshi: "hhh",
+                                        },
+                                        props: ["ceshi"],
+                                        data() {
+                                            return {
+                                                msg: "template1",
+                                            };
+                                        },
+                                    });
+                                },
+                                props: {
+                                    ceshi: "测试覆盖",
+                                    ceshi1: "测试覆盖1",
+                                },
+                            },
+                        ],
+                        option: {
+                            page: {
+                                first: 2,
+                                limit: 10,
+                            },
+                            // 开启事件中注入自定义参数
+                            injectEvent: true,
+                            // 表单整体显示规则配置
+                            form: {
+                                //行内表单模式
+                                inline: false,
+                                //表单域标签的位置，如果值为 left 或者 right 时，则需要设置 label-width
+                                labelPosition: "right",
+                                //表单域标签的宽度，例如 '50px'。作为 Form 直接子元素的 form-item 会继承该值。支持 auto。
+                                labelWidth: "150",
+                            },
+                            // 设置所有组件的通用规则
+                            global: {
+                                // 设置input的通用规则
+                                input: {
+                                    props: {
+                                        disabled: false,
+                                    },
+                                    // 会在input标签上添加name属性
+                                    attrs: {
+                                        name: "kfg",
+                                    },
+                                },
+                            },
+                        },
+                        fApi: {},
+                    };
+                },
+                methods: {
+                    emitFun(arg1) {
+                        // console.log(arg1);
+                    },
+                    syncFun(arg1) {
+                        console.log(arg1);
+                    },
+                },
+                mounted: function () {},
+            });
 
-      let temp = new Vue();
-      temp.$options.render = renderObj.render;
-      temp.$options.staticRenderFns = renderObj.staticRenderFns;
-      temp.$mount("#temp");
-    };
-  </script>
+            // 使用Vue.compile方式
+            let template = "<div>i am template</div>";
+            let renderObj = Vue.compile(template); //得到渲染函数
+            // console.log("renderObj", renderObj);
+
+            let temp = new Vue();
+            temp.$options.render = renderObj.render;
+            temp.$options.staticRenderFns = renderObj.staticRenderFns;
+            temp.$mount("#temp");
+        };
+    </script>
 </html>

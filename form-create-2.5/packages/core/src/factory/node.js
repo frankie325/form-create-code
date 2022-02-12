@@ -23,6 +23,7 @@ export function CreateNodeFactory() {
             this.vm = vm;
             this.$h = vm.$createElement;
         },
+        // 生成VNode
         make(tag, data, children) {
             if (Vue.config.isReservedTag(tag) && data.nativeOn) delete data.nativeOn;
             let Node = this.$h(tag, parseProp(data), children || []);
@@ -35,15 +36,35 @@ export function CreateNodeFactory() {
     extend(CreateNode, {
         aliasMap,
         alias(alias, name) {
+            /*  
+                以colorPicker为例
+                {
+                   colorPicker: "ColorPicker",
+                   color-picker: "ColorPicker",
+                   colorpicker: "ColorPicker",
+                }
+            */ 
             aliasMap[alias] = name;
         },
         use(nodes) {
+            /*
+                nodes为
+                {
+                    button: 'iButton',
+                    icon: 'Icon',
+                    slider: 'Slider',
+                    colorPicker: 'ColorPicker',
+                    ....
+                }
+            */
             Object.keys(nodes).forEach((k) => {
-                const line = toLine(k);
-                const lower = toString(k).toLocaleLowerCase();
+                const line = toLine(k); //驼峰转为连字符
+                const lower = toString(k).toLocaleLowerCase(); //仅转换为小写
                 const v = nodes[k];
+                // 将原本、连字符形式、小写形式
                 [k, line, lower].forEach(n => {
-                    CreateNode.alias(k, v);
+                    CreateNode.alias(k, v); //添加到aliasMap
+                    //添加生成VNode的原型方法
                     CreateNode.prototype[n] = function (data, children) {
                         return this.make(v, data, children);
                     };

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <!-- import Vue.js -->
+        <script src="//unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+        <!-- import stylesheet -->
+        <link rel="stylesheet" href="//unpkg.com/view-design/dist/styles/iview.css" />
+        <!-- import iView -->
+        <script src="//unpkg.com/view-design/dist/iview.min.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <i-input placeholder="输入框">
+                <!-- <i-icon type="md-add" slot="prefix" /> -->
+                <!-- <template v-slot:prefix>
+                    <div>prefix</div>
+                </template> -->
+            </i-input>
+        </div>
+    </body>
+    <script>
+        window.onload = () => {
+            Vue.component("comp", {
+                template: "<div><slot name='prefix'></slot>i am comp</div>",
+            });
+            new Vue({
+                el: "#app",
+                render(h) {
+                    return [
+                        h(
+                            "i-input",
+                            {
+                                props: {
+                                    prefix: "1", //iview的
+                                },
+                                // 通过scopedSlots属性设置prefix，因为iview的判断问题，还需设置props.prefix不能为空字符
+                                scopedSlots: {
+                                    prefix() {
+                                        return h("div", "哈哈");
+                                    },
+                                },
+                                on: {
+                                    "hook:mounted": () => {
+                                        console.log(this);
+                                    },
+                                },
+                            },
+                            // [
+                            //     h(
+                            //         "div",
+                            //         {
+                            //             slot: "prefix",
+                            //         },
+                            //         "i am prefix"
+                            //     ),
+                            // ]
+                        ),
+                        // h("comp", {
+                        //     scopedSlots: {
+                        //         prefix: () => {
+                        //             return h("div", "哈哈");
+                        //         },
+                        //     },
+                        // }),
+                    ];
+                },
+            });
+        };
+    </script>
+</html>

@@ -19,6 +19,7 @@ const is = {
     }
 })
 
+// 判断对象是否有指定的属性，不包含原型链上的
 export function hasProperty(rule, k) {
     return ({}).hasOwnProperty.call(rule, k)
 }

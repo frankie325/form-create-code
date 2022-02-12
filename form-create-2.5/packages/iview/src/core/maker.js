@@ -1,16 +1,25 @@
 import {creatorFactory} from '@form-create/core/src/index';
 
+/*
+    创建maker对象，为生成组件规则的助手方法
+*/
 const maker = {};
 
 const names = ['upload', 'select', 'tree', 'checkbox', 'autoComplete', 'cascader', 'colorPicker', 'frame', 'inputNumber', 'radio', 'rate', 'timePicker', 'group'];
 
 function useAlias(maker) {
+    /*
+    遍历上面的组件名称，调用creatorFactory生成Creator实例
+    maker = {
+        upload:Creator实例,
+    }
+    */ 
     names.forEach(name => {
         maker[name] = creatorFactory(name);
     });
-    maker.auto = maker.autoComplete;
-    maker.number = maker.inputNumber;
-    maker.color = maker.colorPicker;
+    maker.auto = maker.autoComplete; //autoComplete重命名为auto
+    maker.number = maker.inputNumber; //重命名
+    maker.color = maker.colorPicker; //重命名
 }
 
 

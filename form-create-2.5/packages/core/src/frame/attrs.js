@@ -3,6 +3,7 @@ import {functionalMerge, normalMerge, toArrayMerge} from '@form-create/utils/lib
 
 export const keyAttrs = ['type', 'slot', 'emitPrefix', 'value', 'name', 'native', 'hidden', 'display', 'inject', 'options', 'emit', 'nativeEmit', 'link', 'prefix', 'suffix', 'update', 'sync', 'optionsTo', 'key'];
 
+// rule配置中为数组的属性
 export const arrayAttrs = ['validate', 'children', 'control'];
 
 export const normalAttrs = ['effect', 'deep'];

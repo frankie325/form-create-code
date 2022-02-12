@@ -6,6 +6,7 @@ import {enumerable} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 
 function bind(ctx) {
+    // 为rule添加__fc__属性，为ctx实例
     Object.defineProperties(ctx.origin, {
         __fc__: enumerable(ctx, true)
     });
@@ -18,8 +19,8 @@ export default function RuleContext(handle, rule) {
         id,
         ref: id,
         wrapRef: id + 'fi',
-        rule,
-        origin: rule.__origin__ || rule,
+        rule, //rule的引用
+        origin: rule.__origin__ || rule, 
         name: rule.name,
 
         watch: [],
@@ -28,10 +29,10 @@ export default function RuleContext(handle, rule) {
         ctrlRule: [],
         parent: null,
         cacheConfig: null,
-        prop: {...rule},
+        prop: {...rule},  //rule的浅拷贝
         computed: {},
         payload: {},
-        input: !!rule.field,
+        input: !!rule.field, //是否存在rule.field字段
         el: undefined,
         defaultValue: rule.field ? deepCopy(rule.value) : undefined,
         field: rule.field || undefined,
@@ -54,17 +55,19 @@ extend(RuleContext.prototype, {
         delete this.payload[name]
     },
     updateKey(flag) {
-        this.key = unique();
+        this.key = unique(); //生成唯一key
         flag && this.parent && this.parent.updateKey(flag);
     },
     updateType() {
-        this.originType = this.rule.type;
-        this.type = toCase(this.rule.type);
+        this.originType = this.rule.type; //保存原始的rule.type
+        this.type = toCase(this.rule.type); //rule.type转为驼峰
     },
+    // 设置parser对象到RuleContext实例
     setParser(parser) {
         this.parser = parser;
         parser.init(this);
     },
+    // 合并rule中的属性
     initProp() {
         const rule = {...this.rule};
         delete rule.children;
@@ -79,12 +82,13 @@ extend(RuleContext.prototype, {
     },
     unlink() {
         this.linkOn.forEach(un => un());
-        this.linkOn = [];
+        this.linkOn = []; //清空linkOn
     },
     link() {
         this.unlink();
         this.$handle.appendLink(this);
     },
+    // 监听ctx.rule中的属性
     watchTo() {
         this.$handle.watchCtx(this);
     },
@@ -137,16 +141,16 @@ extend(RuleContext.prototype, {
     update(handle, init) {
         extend(this, {
             deleted: false,
-            $handle: handle,
-            $render: handle.$render,
+            $handle: handle, //handle实例
+            $render: handle.$render,//render实例
             $api: handle.api,
             vm: handle.vm,
-            trueType: handle.getType(this.originType),
+            trueType: handle.getType(this.originType), //rule.type对应的组件名称
             vNode: handle.$render.vNode,
             updated: false,
         });
-        !init && this.unwatch();
-        this.watchTo();
-        this.link();
+        !init && this.unwatch(); //非初始化，解除监听
+        this.watchTo(); //监听
+        this.link();//处理rule.link属性
     }
 })

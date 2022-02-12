@@ -14,6 +14,7 @@ export function info() {
     }
 }
 
+// 默认的option配置
 export default function getConfig() {
     return {
         form: {

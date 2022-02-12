@@ -17,9 +17,9 @@ export default function useLifecycle(Handler) {
             }
         },
         lifecycle(name) {
-            const fn = this.options[name];
-            is.Function(fn) && invoke(() => fn(this.api));
-            this.vm.$emit(name, this.api);
+            const fn = this.options[name]; //name="mounted"是，拿到option.mounted
+            is.Function(fn) && invoke(() => fn(this.api)); //执行mounted并传入api作为第一个参数
+            this.vm.$emit(name, this.api); //触发form-create组件上绑定的方法
         },
     })
 }

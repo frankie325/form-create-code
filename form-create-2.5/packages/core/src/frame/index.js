@@ -103,7 +103,7 @@ export default function FormCreateFactory(config) {
     const maker = makerFactory();
     let globalConfig = {global: {}};
     const data = {};
-    const CreateNode = CreateNodeFactory();
+    const CreateNode = CreateNodeFactory(); //得到CreateNode构造函数
 
     exportAttrs(config.attrs || {});
 
@@ -139,16 +139,34 @@ export default function FormCreateFactory(config) {
     }
 
     function componentAlias(alias) {
+        // 注册用来创建表单控件VNode的方法
         CreateNode.use(alias);
     }
 
     function parser() {
+        /*
+            parser为
+            {
+                id: "input",
+                prop: {
+                    name:"input",
+                    ...
+                }
+            }
+            生成的parsers = {
+                input: {
+                    name:"input",
+                    toValue(){},
+                    ...等方法
+                }
+            }
+        */ 
         const data = nameProp(...arguments);
         if (!data.id || !data.prop) return;
-        const name = toCase(data.id);
+        const name = toCase(data.id); //转为驼峰
         const parser = data.prop;
         const base = parser.merge === true ? parsers[name] : undefined;
-        parsers[name] = {...(base || BaseParser), ...parser};
+        parsers[name] = {...(base || BaseParser), ...parser}; //合并BaseParser
         maker[name] = creatorFactory(name);
         parser.maker && extend(maker, parser.maker);
     }
@@ -172,7 +190,7 @@ export default function FormCreateFactory(config) {
     }
 
     
-
+    // 函数式组件的构造函数
     function $vnode() {
         return _vue.extend(fragment);
     }
@@ -201,12 +219,12 @@ export default function FormCreateFactory(config) {
                 directives,
             },
             CreateNode,
-            bus: new _vue,
+            bus: new _vue, //vue实例，中央事件总线
             unwatch: null,
             extendApi: config.extendApi || (api => api)  //方法，可以将iview的api合并到核心api
         })
         this.init();
-        this.initOptions(options || {});
+        this.initOptions(options || {}); //初始化opt
     }
 
     extend(FormCreate.prototype, {
@@ -248,30 +266,39 @@ export default function FormCreateFactory(config) {
             return this.vm.$pfc && this.vm.extendOption;
         },
 
-        // 
+        // 初始化opt，一些全局配置
         initOptions(options) {
-            this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
+            // 初始化options，一些默认的选项
+            this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)}; 
             if (this.isSub()) {
                 // 如果是嵌套子表单，
                 this.mergeOptions(this.options, this.vm.$pfc.$f.config || {}, true);
             }
             this.updateOptions(options);
         },
+        // 合并用户传递的options到this.options
         mergeOptions(target, opt, parent) {
-            opt = deepCopy(opt);
+            opt = deepCopy(opt);//深拷贝用户传递的options
+
+
+            // 如果是子表单，下面的这些属性不需要合并，删除
             parent && ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el'].forEach((n) => {
                 delete opt[n];
             });
+
             if (opt.global) {
+                // 合并option.global
                 target.global = mergeGlobal(target.global, opt.global);
                 delete opt.global;
             }
+
+            // 合并用户传递的option中其他的属性
             this.$handle.$manager.mergeOptions([opt], target);
             return target;
         },
         updateOptions(options) {
-            this.mergeOptions(this.options, options);
-            this.$handle.$manager.updateOptions(this.options);
+            this.mergeOptions(this.options, options); //将用户传递的options合并到this.options
+            this.$handle.$manager.updateOptions(this.options); //将合并后的options添加到manager.options
         },
         // 在form-create组件created执行时调用
         created() {
@@ -281,9 +308,11 @@ export default function FormCreateFactory(config) {
         api() {
             return this.$handle.api;
         },
+        // 在form-create组件render执行时调用
         render() {
             return this.$handle.render();
         },
+        // 在form-create组件mounted执行时调用
         mounted() {
             this.$handle.mounted();
         },
@@ -359,7 +388,7 @@ export default function FormCreateFactory(config) {
 
                 Vue.prototype.$formCreate = $formCreate; //方式1：通过Vue原型调用生成form-create，this.$formCreate(rule, opt)
                 Vue.component('FormCreate', $form());   //方式2：直接进行组件注册，$form()执行为form-create组件的构造函数
-                Vue.component('FcFragment', $vnode()); 
+                Vue.component('FcFragment', $vnode());  //注册函数式组件
             }
         })
     }
@@ -381,7 +410,7 @@ export default function FormCreateFactory(config) {
 
     CreateNode.use({fragment: 'fcFragment'});
 
-    if (config.install) create.use(config);
+    if (config.install) create.use(config); //执行config.install方法
 
    
 
