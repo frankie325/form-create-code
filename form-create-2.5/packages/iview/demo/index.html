@@ -19,7 +19,7 @@
 
     <body>
         <div id="app">
-            <form-create v-model="fApi" :rule="rule" :option="option" @ceshi-input="emitFun" @sync="syncFun">
+            <form-create :value.sync="fValue" v-model="fApi" :rule="rule" :option="option" @ceshi-input="emitFun" @sync="syncFun">
                 <template slot="type-field-component" slot-scope="scope">
                     <i-input :value="''+scope.model.value" @input="(v)=>scope.model.callback(parseInt(v))" />
                 </template>
@@ -27,7 +27,7 @@
                 
                 </template> -->
             </form-create>
-            <!-- <button @click="clearable = !clearable">clearable双向绑定</button> -->
+            <button @click="changeProp">双向绑定</button>
         </div>
         <div id="temp"></div>
     </body>
@@ -63,12 +63,19 @@
                 //rule 生成
                 mounted({ value }, rule, fapi) {},
             });
-
+            Vue.use(formCreate, {
+                global: {
+                    input: {
+                        style: "color:blue",
+                    },
+                },
+            });
             new Vue({
                 el: "#app",
                 data() {
                     return {
                         rule: [
+                            // formCreate.maker.create("i-button", "btn", "自定义按钮"),
                             // "根字符子节点测试", //不会渲染
                             {
                                 type: "fieldComponent",
@@ -79,8 +86,8 @@
                             // ...jsonMock(),
                             {
                                 type: "input",
-                                field: "ceshi",
-                                title: "输入框1",
+                                field: "name",
+                                title: "姓名",
                                 value: "",
                                 effect: { str: "我是自定义的属性" },
                                 sync: ["clearable"],
@@ -251,6 +258,9 @@
                             },
                         ],
                         option: {
+                            formData: {
+                                name: "kfg2",
+                            },
                             page: {
                                 first: 2,
                                 limit: 10,
@@ -270,17 +280,29 @@
                             global: {
                                 // 设置input的通用规则
                                 input: {
+                                    value: 1,
                                     props: {
                                         disabled: false,
                                     },
+                                    style: "border:3px solid red",
+                                    class: ["d1", { d2: true }],
                                     // 会在input标签上添加name属性
                                     attrs: {
                                         name: "kfg",
                                     },
                                 },
                             },
+                            mounted() {},
+                            onSubmit: function (formData, fApi) {
+                                console.log(formData);
+                            },
                         },
                         fApi: {},
+                        fValue: {
+                            //表单字段初始值
+                            name: "kfg1",
+                            age: "22",
+                        },
                     };
                 },
                 methods: {
@@ -289,6 +311,16 @@
                     },
                     syncFun(arg1) {
                         console.log(arg1);
+                    },
+                    changeProp() {
+                        // this.option.form.inline = true;
+                        // this.rule[2].field = "ceshi333";
+                        // this.fValue.name = 'kfg2'
+                        this.fValue = {
+                            name: "kfg22",
+                            age: "22222",
+                        };
+                        console.log(this);
                     },
                 },
                 mounted: function () {},

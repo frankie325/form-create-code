@@ -100,6 +100,14 @@ export default function FormCreateFactory(config) {
     const providers = {
         fetch: $fetch
     };
+
+    /*
+        创建maker对象，key为组件名称，value为组件对应创建creator实例的方法
+        makerFactory注册全局的方法
+        还有其他地方注册了：
+        来自iview包里的parser解析器上的maker方法，或者用户注册的parser解析器上的maker方法
+        来自iview包里core/maker.js文件部分组件的maker方法
+    */
     const maker = makerFactory();
     let globalConfig = {global: {}};
     const data = {};
@@ -150,6 +158,7 @@ export default function FormCreateFactory(config) {
                 id: "input",
                 prop: {
                     name:"input",
+                    merge: true,
                     ...
                 }
             }
@@ -165,8 +174,12 @@ export default function FormCreateFactory(config) {
         if (!data.id || !data.prop) return;
         const name = toCase(data.id); //转为驼峰
         const parser = data.prop;
+        // 当用户使用了create.// 当用户使用了create.parser注册了组件解析器，与之前设置的组件解析器冲突了，
+        // 如果设置了merge属性，则会进行合并，新的优先级高，否则直接覆盖
         const base = parser.merge === true ? parsers[name] : undefined;
-        parsers[name] = {...(base || BaseParser), ...parser}; //合并BaseParser
+        parsers[name] = {...(base || BaseParser), ...parser}; 
+        
+        // 注册来自iview包里parser解析器或者用户创建的parser解析器中，对应创建creator实例的方法
         maker[name] = creatorFactory(name);
         parser.maker && extend(maker, parser.maker);
     }
@@ -281,7 +294,7 @@ export default function FormCreateFactory(config) {
             opt = deepCopy(opt);//深拷贝用户传递的options
 
 
-            // 如果是子表单，下面的这些属性不需要合并，删除
+            // 如果是子表单，下面的这些属性不需要合并，删除，用最外层的form-create的option配置
             parent && ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el'].forEach((n) => {
                 delete opt[n];
             });

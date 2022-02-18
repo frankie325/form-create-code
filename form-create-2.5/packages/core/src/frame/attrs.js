@@ -8,6 +8,7 @@ export const arrayAttrs = ['validate', 'children', 'control'];
 
 export const normalAttrs = ['effect', 'deep'];
 
+// 创建creator实例时用到
 export function attrs() {
     return [...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, ...arrayAttrs, ...normalAttrs];
 }

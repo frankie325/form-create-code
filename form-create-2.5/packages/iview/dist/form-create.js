@@ -2359,6 +2359,7 @@
         };
       },
       render: function render() {
+        console.log("form-create重新渲染")
         return this.formCreate.render();
       },
       methods: {
@@ -2369,6 +2370,7 @@
           this.renderRule = _toConsumableArray(this.rule || []);
         },
         _updateValue: function _updateValue(value) {
+          // debugger
           if (this.destroyed) return;
           this.updateValue = JSON.stringify(value);
           this.$emit("update:value", value);
@@ -2403,6 +2405,9 @@
 
           this._renderRule();
         },
+      },
+      updated(){
+        console.log("form-create执行updated钩子")
       },
       beforeCreate: function beforeCreate() {
         var _this2 = this;
@@ -4821,6 +4826,7 @@
         return this.vm.validate;
       },
       syncForm: function syncForm() {
+        // debugger
         var _this2 = this;
 
         toEmpty(this.form);
@@ -4874,6 +4880,7 @@
         };
       },
       appendValue: function appendValue(rule) {
+        // debugger
         if (!rule.field || !hasProperty(this.appendData, rule.field)) return;
         rule.value = this.appendData[rule.field];
         delete this.appendData[rule.field];
@@ -4907,6 +4914,7 @@
           return (this.deferSyncFn.sync = true);
         }
 
+        // this.vm._updateValue( this.form);
         this.vm._updateValue(_objectSpread2({}, this.form));
       },
       isChange: function isChange(ctx, value) {
@@ -6081,6 +6089,7 @@
         this.updateOptions(options);
       },
       mergeOptions: function mergeOptions(target, opt, parent) {
+        // debugger
         opt = deepCopy(opt);
         parent &&
           ["page", "onSubmit", "mounted", "reload", "formData", "el"].forEach(
