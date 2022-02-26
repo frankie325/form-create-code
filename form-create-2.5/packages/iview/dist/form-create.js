@@ -3661,7 +3661,7 @@
             if (none) {
               vn = this.display(vn);
             }
-
+            debugger
             vn = this.item(ctx, vn);
           }
 
@@ -4891,6 +4891,7 @@
         }
       },
       deferSyncValue: function deferSyncValue(fn, sync) {
+        // debugger
         if (!this.deferSyncFn) {
           this.deferSyncFn = fn;
         }
@@ -4910,6 +4911,7 @@
         }
       },
       syncValue: function syncValue() {
+        console.log(111111111)
         if (this.deferSyncFn) {
           return (this.deferSyncFn.sync = true);
         }
@@ -6596,6 +6598,7 @@
       var rule = ctx.prop;
       var uni = "".concat(this.key).concat(ctx.key);
       var col = rule.col;
+      // debugger
       var isTitle = this.isTitle(rule);
       var labelWidth = !col.labelWidth && !isTitle ? 0 : col.labelWidth;
       var _this$rule$props = this.rule.props,
