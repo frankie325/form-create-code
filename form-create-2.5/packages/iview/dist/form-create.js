@@ -2393,7 +2393,8 @@
         },
         rule: function rule(n) {
           var _this = this;
-
+          debugger
+          // console.log("reload rule")
           if (
             n.length === this.renderRule.length &&
             n.every(function(v) {
@@ -3661,7 +3662,6 @@
             if (none) {
               vn = this.display(vn);
             }
-            debugger
             vn = this.item(ctx, vn);
           }
 
@@ -4418,6 +4418,8 @@
           _this5.loading = false;
 
           if (_this5.cycleLoad && _this5.pageEnd) {
+          // debugger
+
             return _this5.loadRule();
           }
 
@@ -4601,6 +4603,7 @@
         return ctx.input && ctx.rule.control && this.useCtrl(ctx);
       },
       useCtrl: function useCtrl(ctx) {
+        // debugger
         var _this7 = this;
 
         var controls = getCtrl(ctx),
@@ -4683,6 +4686,7 @@
               ctx.ctrlRule.push(ruleCon);
 
               _this7.bus.$once("load-start", function() {
+                // debugger
                 // this.cycleLoad = true;
                 if (prepend) {
                   api.prepend(ruleCon, prepend, child);
@@ -4708,7 +4712,7 @@
       },
       _reloadRule: function _reloadRule(rules) {
         var _this8 = this;
-
+        
         // console.warn('%c reload', 'color:red');
         if (!rules) rules = this.rules;
 

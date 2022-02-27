@@ -139,46 +139,61 @@
                                 //         slot: "prefix",
                                 //     },
                                 // ],
-                                slot:"name"
-                            },
-                            {
-                                type: "fragment",
-                                children: [
+                                control: [
+                                    // "哈哈",
                                     {
-                                        title:"fragment包裹的组件1",
-                                        type: "input",
-                                        field: "fragment1",
-                                    },
-                                    {
-                                        title:"fragment包裹的组件2",
-                                        type: "input",
-                                        field: "fragment2",
+                                        handle: (val) => !!val,
+                                        prepend:"name",
+                                        rule: [
+                                            {
+                                                type: "input",
+                                                field: "info",
+                                                title: "差评原因",
+                                                value: "default info",
+                                            },
+                                        ],
                                     },
                                 ],
                             },
                             // {
-                            //     type: "rate",
-                            //     field: "star",
-                            //     title: "评分",
-                            //     value: 5,
-                            //     control: [
+                            //     type: "fragment",
+                            //     children: [
                             //         {
-                            //             //可以直接用value
-                            //             // value: 2,
-                            //             handle(val) {
-                            //                 return val < 3;
-                            //             },
-                            //             rule: [
-                            //                 {
-                            //                     type: "input",
-                            //                     field: "info",
-                            //                     title: "差评原因",
-                            //                     value: "default info",
-                            //                 },
-                            //             ],
+                            //             title: "fragment包裹的组件1",
+                            //             type: "input",
+                            //             field: "fragment1",
+                            //         },
+                            //         {
+                            //             title: "fragment包裹的组件2",
+                            //             type: "input",
+                            //             field: "fragment2",
                             //         },
                             //     ],
                             // },
+                            {
+                                type: "rate",
+                                field: "star",
+                                title: "评分",
+                                value: 5,
+                                control: [
+                                    {
+                                        //可以直接用value
+                                        // value: 2,
+                                        handle(val) {
+                                            return !!val;
+                                        },
+                                        rule: [
+                                            {
+                                                type: "input",
+                                                field: "info2",
+                                                append:"star",
+                                                title: "差评原因",
+                                                value: "default info",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
                             // {
                             //     type: "row",
                             //     // native: true,
