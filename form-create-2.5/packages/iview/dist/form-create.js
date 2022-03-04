@@ -2393,7 +2393,7 @@
         },
         rule: function rule(n) {
           var _this = this;
-          debugger
+          // debugger
           // console.log("reload rule")
           if (
             n.length === this.renderRule.length &&
@@ -4632,7 +4632,7 @@
               isHidden: is.String(control.rule[0]),
             }
           );
-
+          // debugger
           if (
             (data.valid && data.ctrl) ||
             (!data.valid && !data.ctrl && !data.isHidden)
@@ -5121,6 +5121,7 @@
                   return ctx.rule[key];
                 },
                 function(n, o) {
+                  // debugger
                   if (_this.loading || _this.noWatchFn || _this.reloading)
                     return;
 
@@ -5159,6 +5160,7 @@
 
                     _this.bindParser(ctx);
                   } else if (key === "children") {
+                    
                     var _flag = is.trueArray(n);
 
                     _this.deferSyncValue(function() {
