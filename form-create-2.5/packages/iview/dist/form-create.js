@@ -4915,7 +4915,6 @@
         }
       },
       syncValue: function syncValue() {
-        console.log(111111111)
         if (this.deferSyncFn) {
           return (this.deferSyncFn.sync = true);
         }
