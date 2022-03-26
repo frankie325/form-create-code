@@ -1169,6 +1169,7 @@
       var options = ctx.props.formCreateInject.options;
       return h("Select", helper([{}, ctx.data]), [
         (Array.isArray(options) ? options : []).map(function(props, index) {
+          console.log(props)
           var slot = props.slot;
           return h(
             "Option",
@@ -3165,6 +3166,7 @@
             validate: validate,
           });
         } else {
+          // debugger
           props(id, "validate", validate);
         }
       },
@@ -3478,6 +3480,7 @@
         if (!ctx.cacheConfig)
           ctx.cacheConfig =
             g[ctx.originType] || g[ctx.type] || g[ctx.trueType] || {};
+
         ctx.prop = mergeRule({}, [g["*"], ctx.cacheConfig, ctx.prop]);
       },
       setOptions: function setOptions(ctx) {

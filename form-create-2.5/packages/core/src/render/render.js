@@ -352,6 +352,7 @@ export default function useRender(Render) {
             }, [vn]);
         },
         // 将ctx实例注入到form-create实例的ctxInject属性上
+        // 自定义组件可以通过设置props访问到下面属性
         injectProp(ctx) {
             if (!this.vm.ctxInject[ctx.id]) {
                 $set(this.vm.ctxInject, ctx.id, {

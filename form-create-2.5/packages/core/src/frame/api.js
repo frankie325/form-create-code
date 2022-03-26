@@ -172,6 +172,7 @@ export default function Api(h) {//h为handler实例
             tidyFields(fields).forEach((field) => {
                 h.getCtxs(field).forEach(ctx => {
                     $set(ctx.rule.props, 'disabled', !!disabled);
+                    // 不生效，没清理缓存 ,加上h.$render.clearCache(ctx)
                 });
             });
             h.refresh();

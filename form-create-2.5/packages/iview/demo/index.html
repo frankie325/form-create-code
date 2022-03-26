@@ -11,7 +11,7 @@
 
         <!-- import iview -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/iview@3.5.4/dist/styles/iview.css" />
-        <script src="https://cdn.jsdelivr.net/npm/iview@3.5.4/dist/iview.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/iview@3.5.4/dist/iview.js"></script>
 
         <script src="../dist/form-create.js"></script>
         <script src="../examples/jsonRule.js"></script>
@@ -35,10 +35,14 @@
                 
                 </template> -->
             </form-create>
-            <button @click="addRule">新增规则</button>
-            <button @click="removeRule">刪除规则</button>
-            <button @click="changeProp">双向绑定</button>
-            <button @click="resetFields">重置字段</button>
+            <i-button type="primary" @click="addRule">新增规则</i-button>
+            <i-button type="primary" @click="removeRule">刪除规则</i-button>
+            <i-button type="primary" @click="changeProp">双向绑定</i-button>
+            <i-button type="primary" @click="resetFields">重置字段</i-button>
+            <i-button type="primary" @click="updateValid">更新校验规则</i-button>
+            <i-button type="primary" @click="validateForm">表单校验</i-button>
+            <i-button type="primary" @click="updateRule">更新指定规则</i-button>
+            <i-button type="primary" @click="disabled">禁用表单组件</i-button>
         </div>
         <div id="temp"></div>
     </body>
@@ -88,6 +92,74 @@
                 data() {
                     return {
                         rule: [
+                            // {
+                            //     title: "子表单1",
+                            //     type: "subForm",
+                            //     field: "sub-form1",
+                            //     props: {
+                            //         rule: [
+                            //             {
+                            //                 title: "子输入框1",
+                            //                 type: "input",
+                            //                 field: "sub-input1",
+                            //                 validate: [{ required: true, message: "子输入框1不能为空", trigger: "change" }],
+                            //             },
+                            //             {
+                            //                 title: "子输入框2",
+                            //                 type: "input",
+                            //                 field: "sub-input2",
+                            //                 validate: [{ required: true, message: "子输入框2不能为空", trigger: "change" }],
+                            //             },
+                            //             {
+                            //                 title: "子表单2",
+                            //                 type: "subForm",
+                            //                 field: "sub-form2",
+                            //                 props: {
+                            //                     rule: [
+                            //                         {
+                            //                             title: "子输入框3",
+                            //                             type: "input",
+                            //                             field: "sub-input3",
+                            //                             validate: [{ required: true, message: "子输入框3不能为空", trigger: "change" }],
+                            //                         },
+                            //                         {
+                            //                             title: "子输入框4",
+                            //                             type: "input",
+                            //                             field: "sub-input4",
+                            //                             validate: [{ required: true, message: "子输入框4不能为空", trigger: "change" }],
+                            //                         },
+                            //                     ],
+                            //                     option: {
+                            //                         submitBtn: false,
+                            //                     },
+                            //                 },
+                            //             },
+                            //         ],
+                            //         option: {
+                            //             // form: {
+                            //             //     labelPosition: "left",
+                            //             //     labelWidth: 1200,
+                            //             // },
+                            //             submitBtn: false,
+                            //         },
+                            //     },
+                            //     // wrap: { show: false },
+                            // },
+                            // {
+                            //     title: "数组组件",
+                            //     field: "group-comp",
+                            //     type: "group",
+                            //     props: {
+                            //         // expand: 1,
+                            //         rules: [
+                            //             {
+                            //                 title: "选择器",
+                            //                 type: "select",
+                            //                 field: "trigger",
+                            //             },
+                            //         ],
+                            //     },
+                            // },
                             // formCreate.maker.create("i-button", "btn", "自定义按钮"),
                             // "根字符子节点测试", //不会渲染
                             // {
@@ -198,31 +270,53 @@
                             //         },
                             //     ],
                             // },
+                            // {
+                            //     type: "select",
+                            //     options: [
+                            //         {
+                            //             label: "标签1",
+                            //             value: "1",
+                            //         },
+                            //         {
+                            //             label: "标签2",
+                            //             value: "2",
+                            //         },
+                            //     ],
+                            //     children: [
+                            //         {
+                            //             type: "icon",
+                            //             props: {
+                            //                 type: "ios-checkmark",
+                            //             },
+                            //             slot: "prefix",
+                            //         },
+                            //     ],
+                            // },
+                            // {
+                            //     type: "row",
+                            //     children: [
+                            //         {
+                            //             type: "col",
+                            //             props: { span: 24 },
+                            //             children: [
                             {
-                                type: "row",
-                                children: [
-                                    {
-                                        type: "col",
-                                        props: { span: 24 },
-                                        children: [
-                                            {
-                                                title: "年龄1",
-                                                type: "input",
-                                                field: "age1",
-                                                value: "age1",
-                                                validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
-                                            },
-                                            {
-                                                title: "年龄2",
-                                                type: "input",
-                                                field: "age2",
-                                                value: "age2",
-                                                validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
-                                            },
-                                        ],
-                                    },
-                                ],
+                                title: "年龄1",
+                                type: "input",
+                                field: "age1",
+                                value: "age1",
+                                // validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
                             },
+                            //                 {
+                            //                     title: "年龄2",
+                            //                     type: "input",
+                            //                     field: "age2",
+                            //                     value: "age2",
+                            //                     validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
+                            //                 },
+                            //             ],
+                            //         },
+                            //     ],
+                            // },
                             // {
                             //     type: "row",
                             //     children: [
@@ -326,7 +420,7 @@
                             // 表单整体显示规则配置
                             form: {
                                 //行内表单模式
-                                inline: true,
+                                // inline: true,
                                 //表单域标签的位置，如果值为 left 或者 right 时，则需要设置 label-width
                                 labelPosition: "right",
                                 //表单域标签的宽度，例如 '50px'。作为 Form 直接子元素的 form-item 会继承该值。支持 auto。
@@ -345,6 +439,11 @@
                                     // 会在input标签上添加name属性
                                     attrs: {
                                         name: "kfg",
+                                    },
+                                    on: {
+                                        "on-change": (value) => {
+                                            console.log("input-change", value);
+                                        },
                                     },
                                 },
                             },
@@ -430,8 +529,48 @@
                     resetFields() {
                         this.fApi.resetFields("age1");
                     },
+                    disabled() {
+                        this.fApi.disabled(true, "age1");
+                    },
+                    updateRule() {
+                        this.fApi.mergeRule("age1", {
+                            style: {
+                                border: "1px solid red",
+                            },
+                            props: {},
+                        });
+                    },
+                    validateForm() {
+                        this.fApi.validateField("sub-form2", (err) => {
+                            console.log(err);
+                        });
+                    },
+                    updateValid() {
+                        this.fApi.updateValidate("age1", { required: true, message: "年龄1不能为空", trigger: "change" });
+                    },
                 },
-                mounted: function () {},
+                mounted: function () {
+                    // this.fApi.reload([
+                    //     {
+                    //         title: "输入框",
+                    //         type: "input",
+                    //         field: "input-field",
+                    //         value: "123456",
+                    //         effect: {
+                    //             str: "我是自定义属性",
+                    //         },
+                    //         children: [
+                    //             {
+                    //                 type: "icon",
+                    //                 props: {
+                    //                     type: "ios-checkmark",
+                    //                 },
+                    //                 slot: "prefix",
+                    //             },
+                    //         ],
+                    //     },
+                    // ]);
+                },
             });
 
             // 使用Vue.compile方式
