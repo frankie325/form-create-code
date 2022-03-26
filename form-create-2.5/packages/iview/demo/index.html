@@ -271,52 +271,40 @@
                             //     ],
                             // },
                             // {
-                            //     type: "select",
+                            //     title: "单选框",
+                            //     type: "radio",
+                            //     field: "radio-field",
+                            //     value: 1,
                             //     options: [
                             //         {
-                            //             label: "标签1",
-                            //             value: "1",
+                            //             label: "选项1",
+                            //             value: 1,
                             //         },
                             //         {
-                            //             label: "标签2",
-                            //             value: "2",
+                            //             label: "选项2",
+                            //             value: 2,
                             //         },
-                            //     ],
-                            //     children: [
                             //         {
-                            //             type: "icon",
-                            //             props: {
-                            //                 type: "ios-checkmark",
-                            //             },
-                            //             slot: "prefix",
+                            //             label: "选项3",
+                            //             value: 1,
                             //         },
                             //     ],
-                            // },
-                            // {
-                            //     type: "row",
-                            //     children: [
-                            //         {
-                            //             type: "col",
-                            //             props: { span: 24 },
-                            //             children: [
+
                             {
                                 title: "年龄1",
                                 type: "input",
                                 field: "age1",
                                 value: "age1",
-                                // validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
+                                validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
                             },
-                            //                 {
-                            //                     title: "年龄2",
-                            //                     type: "input",
-                            //                     field: "age2",
-                            //                     value: "age2",
-                            //                     validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
-                            //                 },
-                            //             ],
-                            //         },
-                            //     ],
-                            // },
+                            {
+                                title: "年龄2",
+                                type: "input",
+                                field: "age2",
+                                value: "age2",
+                                validate: [{ required: true, message: "年龄不能为空", trigger: "change" }], //校验规则
+                            },
+
                             // {
                             //     type: "row",
                             //     children: [
@@ -469,19 +457,19 @@
                     },
                     changeProp() {
                         // this.option.form.inline = true;
-                        // this.rule[2].field = "ceshi333";
+                        this.rule[0].field = "age111";
                         // this.fValue.name = 'kfg2'
-                        this.rule[0].children[0].children = [
-                            {
-                                title: "性别",
-                                type: "input",
-                                field: "sex",
-                                // col: {
-                                //     span: 12,
-                                // },
-                                validate: [{ required: true, message: "性别不能为空", trigger: "change" }], //校验规则
-                            },
-                        ];
+                        // this.rule[0].children[0].children = [
+                        //     {
+                        //         title: "性别",
+                        //         type: "input",
+                        //         field: "sex",
+                        //         // col: {
+                        //         //     span: 12,
+                        //         // },
+                        //         validate: [{ required: true, message: "性别不能为空", trigger: "change" }], //校验规则
+                        //     },
+                        // ];
                         // this.fValue = {
                         //     name: "kfg22",
                         //     age: "22222",
