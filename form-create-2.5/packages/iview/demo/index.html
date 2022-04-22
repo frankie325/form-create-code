@@ -92,6 +92,16 @@
                 data() {
                     return {
                         rule: [
+                            {
+                                title: "开关",
+                                type: "switch",
+                                field: "switch",
+                                props: {
+                                    slot: {
+                                        open: "开",
+                                    },
+                                },
+                            },
                             // {
                             //     title: "子表单1",
                             //     type: "subForm",
